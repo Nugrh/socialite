@@ -41,10 +41,14 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function redirectToProvider($provider){
+
+    public function redirectToProvider($provider){ // $provider = /login/{provider}/
         return Socialite::driver($provider)->redirect();
     }
 
+    /**
+     * Memperoleh informasi User dari provider
+     */
     public function handleProviderCallback($provider){
         $user = Socialite::driver($provider)->user();
         $authUser = $this->findOrCreateUser($user, $provider);
@@ -53,6 +57,10 @@ class LoginController extends Controller
         return redirect($this->redirectTo);
     }
 
+    /**
+     * Jika user telah terdaftar maka return user
+     * Selain itu, user akan di daftarkan
+     */
     public function findOrCreateUser($user ,$provider){
         $authUser = User::where('provider_id', $user->id)->first();
 
@@ -62,7 +70,7 @@ class LoginController extends Controller
             return User::create([
                 'name' => $user->name,
                 'email' => $user->email,
-                'password' => '',
+                'password' => '', // default kosong
                 'provider' => $provider,
                 'provider_id' => $user->id,
             ]);
