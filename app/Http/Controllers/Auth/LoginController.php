@@ -72,9 +72,9 @@ class LoginController extends Controller
             return User::create([
                 'name' => $user->name,
                 'email' => $user->email,
-                'password' => '', // default kosong
                 'provider' => $provider,
                 'provider_id' => $user->id,
+                'password' => !empty($user->password) ? $user->password : '', // kalo user password ada isinya, isi, kalo kgk ada, skip
             ]);
         }
 

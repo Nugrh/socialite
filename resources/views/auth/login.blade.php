@@ -67,7 +67,8 @@
 
                         <div class="form-group row mt-2">
                             <div class="col-md-6 offset-md-4 ">
-                                <a href="{{ url('/login/github') }}" class="btn btn-outline-info"><i class="fa fa-github"></i>Github</a>
+                                <a href="{{ url('/login/github') }}" class="btn">Github</a>
+                                <a href="{{ url('/login/google') }}" class="btn">Google</a>
                             </div>
                         </div>
                     </form>
