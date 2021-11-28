@@ -41,7 +41,9 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-
+    /**
+     * Redirect ke provider masing masing untuk mendapat autentikasi
+     */
     public function redirectToProvider($provider){ // $provider = /login/{provider}/
         return Socialite::driver($provider)->redirect();
     }
