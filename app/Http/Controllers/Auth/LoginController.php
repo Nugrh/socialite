@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use function MongoDB\BSON\toRelaxedExtendedJSON;
 
 class LoginController extends Controller
 {
@@ -44,14 +45,16 @@ class LoginController extends Controller
     /**
      * Redirect ke provider masing masing untuk mendapat autentikasi
      */
-    public function redirectToProvider($provider){ // $provider = /login/{provider}/
+    public function redirectToProvider($provider)
+    { // $provider = /login/{provider}/
         return Socialite::driver($provider)->redirect();
     }
 
     /**
      * Memperoleh informasi User dari provider
      */
-    public function handleProviderCallback($provider){
+    public function handleProviderCallback($provider)
+    {
         $user = Socialite::driver($provider)->user();
         $authUser = $this->findOrCreateUser($user, $provider);
         Auth::login($authUser, true);
@@ -63,20 +66,20 @@ class LoginController extends Controller
      * Jika user telah terdaftar maka return user
      * Selain itu, user akan di daftarkan
      */
-    public function findOrCreateUser($user ,$provider){
+    public function findOrCreateUser($user, $provider)
+    {
         $authUser = User::where('provider_id', $user->id)->first();
 
-        if ($authUser){
+        if ($authUser) {
             return $authUser;
         } else {
             return User::create([
-                'name' => $user->name,
+                'name' => !empty($user->name) ? $user->name : $user->email, // jika username belum ada, gunakan email sebagai username
                 'email' => $user->email,
                 'provider' => $provider,
                 'provider_id' => $user->id,
-                'password' => !empty($user->password) ? $user->password : '', // kalo user password ada isinya, isi, kalo kgk ada, skip
+                'password' => !empty($user->password) ? $user->password : '', // jika password tidak ada isinya, maka skip
             ]);
         }
-
     }
 }
